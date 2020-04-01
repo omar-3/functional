@@ -1,0 +1,20 @@
+.. default-domain:: chpl
+
+.. module:: functional
+   :synopsis: This module provides utilities supporting the elegant
+
+functional
+==========
+**Usage**
+
+.. code-block:: chapel
+
+   use functional;
+
+
+
+This module provides utilities supporting the elegant
+and verbose style of the functional paradigm, with utilities
+for efficient iteration, and lazy computations and evalutation.
+
+
