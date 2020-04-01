@@ -1,32 +1,30 @@
-private use RangeChunk only;
+private use RangeChunk;
 
 
-// this is me getting used to Chapel, nothing fancy ... at least in the first few methods.
-// I copied some stuff from the master branch so I could get to know errors in Chapel and stuff.
+// I copied some stuff from the master branch so I could get to know errors and
+// get a sense about how code should be in Chapel.
 
 
 
 /*
     Return an iterator that returns an evenly spaced integer values starting
-    with `start` to `end` with `step` space between each element. OR you can use ranges instead :)
+    with `start` to `end` with `step` space between each element. OR you can use ranges instead :).
 
     :arg start: the first element
     :type start: `int`
 
     :arg step: the space between consecutive elements
-    :type step: `?`
+    :type step: `int`
 
     :arg end: the last element
     :type end: `int`
 */
 
 
-
-
 // serial iterator
 iter count(in start: int, in step: int, in end: int = 0) { 
   if end == 0 then                  
-    for i in start.. by step
+    for i in start.. by step do
         yield i;
   else  
     for i in start..end by step do
