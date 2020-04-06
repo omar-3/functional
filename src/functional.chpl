@@ -1,13 +1,9 @@
 
 
 /*
-
-  This module provides utilities supporting the elegant
-  and verbose style of the functional paradigm, with utilities
-  for efficient iteration, and lazy computations and evalutation.
-
-  
-  
+    This module provides utilities supporting the elegant
+    and verbose style of the functional paradigm, with utilities
+    for efficient iteration, and lazy computations and evalutation.
 */
 
 
@@ -229,3 +225,126 @@ iter groupby(param tag:iterKind, iterable, function, followThis)
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+// to partition the lexicographic space between parallel tasks
+pragma "no doc"
+proc partition(arr, numOfTasks) {
+    var length = arr.size;
+    var step = length / numOfTasks;
+    var partitions: [1..numOfTasks+1] [1..length] int;
+    var j = length;
+    var i = 1;
+    partitions[i] = arr;
+    while j > 1 && i < numOfTasks {
+        arr[j] <=> arr[j - step];
+        j -= 1;
+        i += 1;
+        partitions[i] = arr;
+    }
+    i += 1;
+    sort(arr, comparator=reverseComparator);
+    partitions[i] = arr;
+    return partitions;
+}
+
+// returns true if two arrays are equal
+pragma "no doc"
+proc isEqual(a, b) : bool {
+    for (i, j) in zip(a,b) {
+        if i != j {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+/*
+    returns an iterator pointing to all the permutations the could
+    be generated from `arr` in lexicographic order
+
+    :arg arr: array of elements
+    :type arr: `? []`
+*/
+
+
+iter permute(arr) {
+    sort(arr);
+    var arrFinal = arr;
+    sort(arrFinal, comparator=reverseComparator);
+    yield arr;
+    while true {
+        var i = arr.size;
+        while i > 1 && arr[i - 1] >= arr[i] {
+            i = i - 1;
+        }
+
+        if isEqual(arr, arrFinal) {
+            return;
+        }
+
+        var j = arr.size;
+        while arr[j] <= arr[i - 1] {
+            j = j - 1;
+        }
+
+        arr[i - 1] <=> arr[j];
+
+        j = arr.size;
+        while i < j {
+            arr[i] <=> arr[j];
+            i = i + 1;
+            j = j - 1;
+        }  
+        yield arr;
+    }
+}
+
+
+
+iter permute(param tag: iterKind, arr)
+    where tag == iterKind.leader {
+    sort(arr);
+    var numOfTasks = here.maxTaskPar;                   
+    var partitions = partition(arr, numOfTasks);        
+    coforall tid in 1..#numOfTasks {
+        var firstPermutation = partitions[tid];
+        var secondPermutation = partitions[tid+1];
+        yield (firstPermutation, secondPermutation, tid);    // now every follower needs to generate permutations       
+    }                                                        // between these two limits    
+}
+
+iter permute(param tag: iterKind, arr, followThis) 
+    where tag == iterKind.follower && followThis.size == 3 {
+    var arr = followThis(1);               // this is the starting permutation
+    var arrFinal = followThis(2);              // this is the last permutation
+    var tid = followThis(3);
+    if tid == 1 then yield arr;
+    if tid == here.maxTaskPar then sort(arrFinal, comparator=reverseComparator);         // this looks really ugly
+    while true {
+        var i = arr.size;
+        while i > 1 && arr[i - 1] >= arr[i] {
+            i = i - 1;
+        }
+        if isEqual(arr, arrFinal) {
+            return;
+        }
+        var j = arr.size;
+        while arr[j] <= arr[i - 1] {
+            j = j - 1;
+        }
+        arr[i - 1] <=> arr[j];
+        // sort the suffix
+        j = arr.size;
+        while i < j {
+            arr[i] <=> arr[j];
+            i = i + 1;
+            j = j - 1;
+        }  
+        yield arr;
+    }
+}
