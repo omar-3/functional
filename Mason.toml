@@ -3,4 +3,3 @@ name = "functional"
 version = "0.1.0"
 chplVersion = "1.21.0"
 
-tests = ["functionalTest.chpl"]
