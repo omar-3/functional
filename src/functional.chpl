@@ -348,3 +348,24 @@ iter permute(param tag: iterKind, arr, followThis)
         yield arr;
     }
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+/*
+    Increase sample rate of integer array by integer factor
+    :arg iterable: array of integers
+    :type iterable: `[int] int`
+*/
+
+
+//serial
+iter upsample(iterable, n) {
+    for i in iterable {
+        yield i;
+        for k in 1..n-1 do yield 0;
+    }
+}
