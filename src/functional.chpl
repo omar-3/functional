@@ -13,10 +13,6 @@ private use List;
 private use Sort;
 
 
-// I copied some stuff from the master branch so I could get to know errors and
-// get a sense about how code should be in Chapel.
-
-
 
 /*
     Return an iterator that returns an evenly spaced integer values starting
