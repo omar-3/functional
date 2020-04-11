@@ -247,17 +247,6 @@ proc partition(arr, numOfTasks) {
     return partitions;
 }
 
-// returns true if two arrays are equal
-pragma "no doc"
-proc isEqual(a, b) : bool {
-    for (i, j) in zip(a,b) {
-        if i != j {
-            return false;
-        }
-    }
-    return true;
-}
-
 
 /*
     returns an iterator pointing to all the permutations the could
@@ -279,7 +268,7 @@ iter permute(arr) {
             i = i - 1;
         }
 
-        if isEqual(arr, arrFinal) {
+        if arr.equals(arrFinal) {
             return;
         }
 
@@ -326,7 +315,7 @@ iter permute(param tag: iterKind, arr, followThis)
         while i > 1 && arr[i - 1] >= arr[i] {
             i = i - 1;
         }
-        if isEqual(arr, arrFinal) {
+        if arr.equals(arrFinal) {
             return;
         }
         var j = arr.size;
