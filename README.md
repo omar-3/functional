@@ -5,6 +5,8 @@
 
 There is no need to talk about what a library called `itertools` would do, but let's talk what `chapel` can add to it. [`Chapel`](https://en.wikipedia.org/wiki/Chapel_(programming_language)) is a parallel programming language that can easily be configured to run on multiple locales with off-the-shelf abstractions to deal with task/data parallelis. The language creators introduced the concept of parallel iterators in [User-Defined Parallel Zippered Iterators in Chapel](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.230.5560) in which you can have a signle generator that yields data produced from a iterators working on a different and separate locales, which obviously boast the preformance of a typical generator function working on a single container by distributing the work on multiple workers/iterators.
 
+`Chapel`'s programming model is global-view model so you don't need to worry about how to deal with different locales or how you can structure the data to parallelize the excution, `Chapel` takes care of all of these subtleties. `Chapel` implementation for parallel iterators follows the same model, so you don't need to do anything special except using `forall` instead of `for` and enjoy the performance boast of your parallel generator.
+
 
 #
 
